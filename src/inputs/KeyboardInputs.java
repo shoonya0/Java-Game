@@ -13,7 +13,6 @@ public class KeyboardInputs implements KeyListener{
 	
 	public KeyboardInputs(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
-		
 	}
 	
 	@Override
@@ -30,7 +29,7 @@ public class KeyboardInputs implements KeyListener{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-
+		
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_W:
 				gamePanel.changeYDelta(-5);

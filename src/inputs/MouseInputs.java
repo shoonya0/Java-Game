@@ -13,7 +13,6 @@ public class MouseInputs implements MouseListener ,MouseMotionListener{
 	private GamePanel gamePanel;
 	public MouseInputs(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
-		
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -23,13 +22,19 @@ public class MouseInputs implements MouseListener ,MouseMotionListener{
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		gamePanel.setRectPos(e.getX(), e.getY());
+//		use to place rectangle into mouse current when mouse is moved
+//		gamePanel.setRectPos(e.getX(), e.getY());
+		
+		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		System.out.println("Mouse clicked !!!");
+//		to span an new rectangle
+//		gamePanel.spawnReact(e.getX(), e.getY());
+		
 		
 	}
 
