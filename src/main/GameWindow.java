@@ -12,10 +12,14 @@ public class GameWindow{
 		jF = new JFrame();
 		
 		
-		jF.setSize(400,400);
 		jF.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jF.add(gamePanel);
-		jF.setLocationRelativeTo(null);
+//		jF.setLocationRelativeTo(null);
+		jF.setLocation(100 ,20);
+//		this is use to stop JFrame to resize 
+		jF.setResizable(false);
+//		this fit the size of window to the preferred size of it's components
+		jF.pack();
 		jF.setVisible(true);
 	}
 }

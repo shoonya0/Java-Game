@@ -22,18 +22,12 @@ public class MouseInputs implements MouseListener ,MouseMotionListener{
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-//		use to place rectangle into mouse current when mouse is moved
-//		gamePanel.setRectPos(e.getX(), e.getY());
-		
-		
+//		use to move the player
+		gamePanel.setRectPos(e.getX(), e.getY());		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("Mouse clicked !!!");
-//		to span an new rectangle
-//		gamePanel.spawnReact(e.getX(), e.getY());
 		
 		
 	}
@@ -64,3 +58,16 @@ public class MouseInputs implements MouseListener ,MouseMotionListener{
 
 	
 }
+
+//EXTRA
+//public void mouseMoved(MouseEvent e) {
+////	use to place rectangle into mouse current when mouse is moved
+////	gamePanel.setRectPos(e.getX(), e.getY());	
+//}
+//public void mouseClicked(MouseEvent e) {
+//	// TODO Auto-generated method stub
+//	System.out.println("Mouse clicked !!!");
+////	to span an new rectangle
+////	gamePanel.spawnReact(e.getX(), e.getY());	
+//}
+
