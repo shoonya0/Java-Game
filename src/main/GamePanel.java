@@ -138,12 +138,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 	
-//	method in JPanel
-//	this component allow us to draw
-	public void paintComponent(Graphics g) {
-//		calling an super class which is JPanel which first execute this then do it's also clean the surface so that we do not face glitching image many time
-		super.paintComponent(g);
-
+	public void updateGame() {
 //		updating the animation
 		updateAnimationTick();
 		
@@ -152,6 +147,13 @@ public class GamePanel extends JPanel{
 		
 //		updating the position of the player according to player actions
 		updatePos();
+	}
+	
+//	method in JPanel
+//	this component allow us to draw
+	public void paintComponent(Graphics g) {
+//		calling an super class which is JPanel which first execute this then do it's also clean the surface so that we do not face glitching image many time
+		super.paintComponent(g);
 		
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
