@@ -1,18 +1,17 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Dimension;
+
+//importing the player animation number
+import static utilz.Constants.PlayerConstants.*;
+import static utilz.Constants.Directions.*;
 
 // here i do my drawing part
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Random;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -24,7 +23,13 @@ public class GamePanel extends JPanel{
 //	so that we do not add two different mouse inputs because we are implementing more than one interface
 	private MouseInputs mouseInputs;
 	private float xDelta = 100 ,yDelta = 100;
-	private BufferedImage img ,subImg;
+	private BufferedImage img ;
+	private BufferedImage[][] animations;
+	private int aniTick, aniIndex ,aniSpeed = 15;
+	private int playerAction = IDlE;
+	private int playerDir = -1;
+	private Boolean moving  = false;
+	
 	
 //	JPanel allow us to create functioning window
 	public GamePanel() {
@@ -34,6 +39,7 @@ public class GamePanel extends JPanel{
 		
 //		for an method importing image
 		importImg();
+		loadAnimations();
 		
 //		for setting the size of the panel because the frame size is include the above dragging bar.
 		setPanelSize();
@@ -44,18 +50,36 @@ public class GamePanel extends JPanel{
 		addMouseMotionListener(mouseInputs);
 	}
 	
-private void importImg() {
-//	for getting the image
-	InputStream is = getClass().getResourceAsStream("/player_sprites.png");
-	
-//	error handling
-	try {
-		img = ImageIO.read(is);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	private void loadAnimations() {
+	//	Initialization of animation array
+		animations = new BufferedImage[9][6];
+	//	moving the animation using array
+		for(int j = 0 ;j<animations.length ;j++) {		
+			for(int i=0;i<animations[j].length ;i++) {
+				animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
+			}
+		}	
 	}
-}
+
+	private void importImg() {
+	//	for getting the image
+		InputStream is = getClass().getResourceAsStream("/player_sprites.png");
+		
+	//	error handling
+		try {
+			img = ImageIO.read(is);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+	//		try and catch for closing an input stream
+			try {
+				is.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 //	for setting the panel size
 	private void setPanelSize() {
@@ -63,19 +87,55 @@ private void importImg() {
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setMaximumSize(size);
-		
 	}
 
-	//	here repaint method is refreshing the paintComponent()
-	public void changeXDelta(int value) {
-		this.xDelta += value;
+	public void setDirection(int direction) {
+		this.playerDir = direction;
+		moving = true;
 	}
-	public void changeYDelta(int value) {
-		this.yDelta += value;
+	
+	public void setMoving(boolean moving) {
+		this.moving = moving;
 	}
-	public void setRectPos(int x,int y) {
-		this.xDelta = x;
-		this.yDelta = y;
+	
+	private void updateAnimationTick() {
+		aniTick++;
+//		controlling the speed of the animation
+		if(aniTick >= aniSpeed) {
+			aniTick = 0;
+			aniIndex++;
+//			getting the animation number from
+			if(aniIndex >= GetSpriteAmount(playerAction))
+				aniIndex = 0;
+		}
+	}
+	
+//	for setting the animation for the particular frame
+	private void setAnimation() {
+		if(moving)
+			playerAction = RUNNING;
+		else
+			playerAction = IDlE;		
+	}
+
+//	
+	private void updatePos() {
+		if(moving) {
+			switch (playerDir) {
+				case LEFT:
+					xDelta-=5;
+					break;
+				case UP:
+					yDelta-=5;
+					break;
+				case RIGHT:
+					xDelta+=5;
+					break;
+				case DOWN:
+					yDelta+=5;
+					break;
+			}
+		}
 	}
 	
 //	method in JPanel
@@ -84,16 +144,21 @@ private void importImg() {
 //		calling an super class which is JPanel which first execute this then do it's also clean the surface so that we do not face glitching image many time
 		super.paintComponent(g);
 
-		subImg = img.getSubimage(1*64, 8*40, 64, 40);
+//		updating the animation
+		updateAnimationTick();
 		
-//		here we are drawing sub image of a	n image
+//		setting the animation according to player action
+		setAnimation();
+		
+//		updating the position of the player according to player actions
+		updatePos();
+		
+//		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
-		g.drawImage(subImg, (int)xDelta, (int)yDelta, 120, 80, null);
-		
-		
-	}	
-	
-	
+		g.drawImage(animations[playerAction][aniIndex], (int)xDelta, (int)yDelta, 256, 160, null);
+	}
+
+
 }	
 	
 	
@@ -107,7 +172,18 @@ private void importImg() {
 	
 ////	EXTRA
 	
-	
+////	here repaint method is refreshing the paintComponent()
+//public void changeXDelta(int value) {
+//	this.xDelta += value;
+//}
+//public void changeYDelta(int value) {
+//	this.yDelta += value;
+//}
+//public void setRectPos(int x,int y) {
+//	this.xDelta = x;
+//	this.yDelta = y;
+//}	
+
 //	private float xDir = 1f ,yDir = 1f;
 //	private Color color = new Color(150 ,20 ,90);
 //	private Random random;
