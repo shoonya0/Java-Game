@@ -1,5 +1,8 @@
 package main;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+
 //this class is for keeping my game window
 
 import javax.swing.JFrame;
@@ -21,5 +24,21 @@ public class GameWindow{
 //		this fit the size of window to the preferred size of it's components
 		jF.pack();
 		jF.setVisible(true);
+		
+//		in case player loose focus from window than all moment of the player must stop so for the we use 
+		jF.addWindowFocusListener(new WindowFocusListener() {
+			
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				System.out.println("not focused");
+				gamePanel.getGame().windowFocusLost();
+			}
+			
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 }

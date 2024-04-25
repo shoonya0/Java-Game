@@ -1,5 +1,8 @@
 package main;
 
+import java.awt.Graphics;
+
+import entities.Player;
 
 //here everything is start and take form
 
@@ -14,28 +17,43 @@ public class Game implements Runnable{
 //	updates per seconds
 	private final int UPS_SET = 200;
 	
+	private Player player;
 	
+	
+//	constructor -> special class in java that can be consider like head method of a class
+	public Game() {
+//		for initializing player ,enemies and many more start before game loop to not to stack
+		initClasses();
+		
+		gamePanel = new GamePanel(this);
+		gameWindow = new GameWindow(gamePanel);
+//		here we are telling that we need to focus inputs to gamePanel
+		gamePanel.requestFocus();
+		
+
+		startGameLoop();
+		
+	}
+
+	
+	private void initClasses() {
+		player = new Player(200, 200);	
+	}
+
+
 //	for starting game loop
 	private void startGameLoop() {
 		gameThread = new Thread(this);
 		gameThread.start();
 	}
 	
-	
-//	constructor -> special class in java that can be consider like head method of a class
-	public Game() {
-		
-		gamePanel = new GamePanel();
-		gameWindow = new GameWindow(gamePanel);
-//		here we are telling that we need to focus inputs to gamePanel
-		gamePanel.requestFocus();
-		
-		startGameLoop();
-	}
-	
 //	we use this method to control the player moment or event for readability and we need our logic to run as smooth as it can however we can sacrifice some FPS in case of lag  
 	private void update() {
-		gamePanel.updateGame();
+		player.update();
+	}
+	
+	public void render(Graphics g) {
+		player.render(g);
 	}
 	
 //		the code inside the run method is run on different thread
@@ -93,7 +111,16 @@ public class Game implements Runnable{
 				frames = 0;
 				updates = 0;
 			}
-		}
-		
+		}	
 	}
+	
+	public void windowFocusLost() {
+		player.resetDirBooleans();
+	}
+	
+//	getting player
+	public Player getPlayer() {
+		return player;
+	}
+	
 }

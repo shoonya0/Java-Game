@@ -22,24 +22,14 @@ public class GamePanel extends JPanel{
 
 //	so that we do not add two different mouse inputs because we are implementing more than one interface
 	private MouseInputs mouseInputs;
-	private float xDelta = 100 ,yDelta = 100;
-	private BufferedImage img ;
-	private BufferedImage[][] animations;
-	private int aniTick, aniIndex ,aniSpeed = 15;
-	private int playerAction = IDlE;
-	private int playerDir = -1;
-	private Boolean moving  = false;
-	
+	private Game game;
 	
 //	JPanel allow us to create functioning window
-	public GamePanel() {
+	public GamePanel(Game game) {
 		
 //		Initialize new MouseInputs()
 		mouseInputs = new MouseInputs(this);
-		
-//		for an method importing image
-		importImg();
-		loadAnimations();
+		this.game = game;	
 		
 //		for setting the size of the panel because the frame size is include the above dragging bar.
 		setPanelSize();
@@ -50,103 +40,14 @@ public class GamePanel extends JPanel{
 		addMouseMotionListener(mouseInputs);
 	}
 	
-	private void loadAnimations() {
-	//	Initialization of animation array
-		animations = new BufferedImage[9][6];
-	//	moving the animation using array
-		for(int j = 0 ;j<animations.length ;j++) {		
-			for(int i=0;i<animations[j].length ;i++) {
-				animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
-			}
-		}	
-	}
-
-	private void importImg() {
-	//	for getting the image
-		InputStream is = getClass().getResourceAsStream("/player_sprites.png");
-		
-	//	error handling
-		try {
-			img = ImageIO.read(is);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-	//		try and catch for closing an input stream
-			try {
-				is.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 //	for setting the panel size
 	private void setPanelSize() {
 		Dimension size = new Dimension(1280,800);
-		setMinimumSize(size);
 		setPreferredSize(size);
-		setMaximumSize(size);
 	}
 
-	public void setDirection(int direction) {
-		this.playerDir = direction;
-		moving = true;
-	}
-	
-	public void setMoving(boolean moving) {
-		this.moving = moving;
-	}
-	
-	private void updateAnimationTick() {
-		aniTick++;
-//		controlling the speed of the animation
-		if(aniTick >= aniSpeed) {
-			aniTick = 0;
-			aniIndex++;
-//			getting the animation number from
-			if(aniIndex >= GetSpriteAmount(playerAction))
-				aniIndex = 0;
-		}
-	}
-	
-//	for setting the animation for the particular frame
-	private void setAnimation() {
-		if(moving)
-			playerAction = RUNNING;
-		else
-			playerAction = IDlE;		
-	}
-
-//	
-	private void updatePos() {
-		if(moving) {
-			switch (playerDir) {
-				case LEFT:
-					xDelta-=5;
-					break;
-				case UP:
-					yDelta-=5;
-					break;
-				case RIGHT:
-					xDelta+=5;
-					break;
-				case DOWN:
-					yDelta+=5;
-					break;
-			}
-		}
-	}
-	
 	public void updateGame() {
-//		updating the animation
-		updateAnimationTick();
 		
-//		setting the animation according to player action
-		setAnimation();
-		
-//		updating the position of the player according to player actions
-		updatePos();
 	}
 	
 //	method in JPanel
@@ -154,13 +55,13 @@ public class GamePanel extends JPanel{
 	public void paintComponent(Graphics g) {
 //		calling an super class which is JPanel which first execute this then do it's also clean the surface so that we do not face glitching image many time
 		super.paintComponent(g);
-		
-//		here we are drawing sub image of an image
-//		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
-		g.drawImage(animations[playerAction][aniIndex], (int)xDelta, (int)yDelta, 256, 160, null);
+
+		game.render(g);
 	}
-
-
+	
+	public Game getGame() {
+		return game;
+	}
 }	
 	
 	
