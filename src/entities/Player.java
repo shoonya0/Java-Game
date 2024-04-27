@@ -1,14 +1,10 @@
 package entities;
 
-import static utilz.Constants.Directions.*;
 import static utilz.Constants.PlayerConstants.*;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
+import utilz.LoadSave;
 
 public class Player extends Entity{
 	
@@ -21,8 +17,8 @@ public class Player extends Entity{
 	private float playerSpeed = 2.0f;
 	
 //	here we are passing the x,y to entity
-	public Player(float x, float y) {
-		super(x, y);
+	public Player(float x, float y ,int playerLen ,int playerBre) {
+		super(x, y ,playerLen ,playerBre);
 //		for loading the animation in the animation array
 		loadAnimations();
 	}
@@ -43,7 +39,7 @@ public class Player extends Entity{
 	public void render(Graphics g) {
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
-		g.drawImage(animations[playerAction][aniIndex], (int) x, (int) y, 256, 160, null);
+		g.drawImage(animations[playerAction][aniIndex], (int) x, (int) y, playerLen, playerBre, null);
 	}
 	
 	private void updateAnimationTick() {
@@ -106,30 +102,18 @@ public class Player extends Entity{
 	}
 	
 	private void loadAnimations() {
-//		for getting the image
-		InputStream is = getClass().getResourceAsStream("/player_sprites.png");
-//		error handling
-		try {
-			BufferedImage img = ImageIO.read(is);
-			
+
+		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ALTAS);
+		
 //			Initialization of animation array
-			animations = new BufferedImage[9][6];
+		animations = new BufferedImage[9][6];
 //			moving the animation using array
-			for(int j = 0 ;j<animations.length ;j++) {		
-				for(int i=0;i<animations[j].length ;i++) {
-					animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
-				}
+		for(int j = 0 ;j<animations.length ;j++) {		
+			for(int i=0;i<animations[j].length ;i++) {
+				animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally {
-//			try and catch for closing an input stream
-			try {
-				is.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}	
+		}
+		
 	}
 	
 	public void resetDirBooleans() {

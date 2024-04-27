@@ -3,6 +3,7 @@ package main;
 import java.awt.Graphics;
 
 import entities.Player;
+import levels.LevelManager;
 
 //here everything is start and take form
 
@@ -16,8 +17,17 @@ public class Game implements Runnable{
 	private final int FPS_SET = 120;
 //	updates per seconds
 	private final int UPS_SET = 200;
-	
 	private Player player;
+	private LevelManager levelManager;
+
+	public final static int TILES_DEFAULT_SIZE = 32;
+	public final static float SCALE = 1.7f;
+	public final static int TILES_IN_WIDTH = 26;
+	public final static int TILES_IN_HEIGHT = 14;
+	public final static int TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
+	public final static int GAME_WIDTH = TILES_SIZE *TILES_IN_WIDTH;
+	public final static int GAME_HEIGHT = TILES_SIZE *TILES_IN_HEIGHT;
+	
 	
 	
 //	constructor -> special class in java that can be consider like head method of a class
@@ -37,11 +47,13 @@ public class Game implements Runnable{
 
 	
 	private void initClasses() {
-		player = new Player(200, 200);	
+		player = new Player(200, 200 ,(int)(64*SCALE) ,(int)(40*SCALE));
+		levelManager = new LevelManager(this);
 	}
 
 
 //	for starting game loop
+//	the Thread differentiate from another thread by concept of overriding(function with same name but different value ) 
 	private void startGameLoop() {
 		gameThread = new Thread(this);
 		gameThread.start();
@@ -50,13 +62,15 @@ public class Game implements Runnable{
 //	we use this method to control the player moment or event for readability and we need our logic to run as smooth as it can however we can sacrifice some FPS in case of lag  
 	private void update() {
 		player.update();
+		levelManager.update();
 	}
 	
 	public void render(Graphics g) {
+		levelManager.draw(g);
 		player.render(g);
 	}
 	
-//		the code inside the run method is run on different thread
+//	the code inside the run method is run on different thread
 	@Override
 //	we can change 4 things in overriding
 //	1> increase the accessibility level {private -> protected}
