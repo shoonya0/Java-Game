@@ -1,9 +1,12 @@
 package entities;
 
 import static utilz.Constants.PlayerConstants.*;
+import static utilz.HelpMethods.CanMoveHere;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import main.Game;
 import utilz.LoadSave;
 
 public class Player extends Entity{
@@ -15,12 +18,20 @@ public class Player extends Entity{
 	private Boolean moving  = false ,attacking = false;
 	private Boolean left = false ,up = false ,right = false ,down = false;
 	private float playerSpeed = 2.0f;
+//	contain the level data for checking if the player is on the right tile or not (for hitBox)
+	private int[][] lvlData;
+//	xOffset of player -> from where player start from similarly for yOffset
+	private float xDrawOffset = 21*Game.SCALE;
+	private float yDrawOffset = 4*Game.SCALE;
 	
 //	here we are passing the x,y to entity
-	public Player(float x, float y ,int playerLen ,int playerBre) {
-		super(x, y ,playerLen ,playerBre);
+	public Player(float x, float y ,int width ,int height) {
+		super(x, y ,width ,height);
 //		for loading the animation in the animation array
 		loadAnimations();
+		
+//		here the x and y are of hitBox x and y
+		initHitbox(x, y, 20 * Game.SCALE, 28 * Game.SCALE);
 	}
 	
 	public void update() {
@@ -39,7 +50,11 @@ public class Player extends Entity{
 	public void render(Graphics g) {
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
-		g.drawImage(animations[playerAction][aniIndex], (int) x, (int) y, playerLen, playerBre, null);
+//		we are drawing the player according to hitBox x and y value
+		g.drawImage(animations[playerAction][aniIndex], (int)(hitBox.x - xDrawOffset), (int)(hitBox.y - yDrawOffset), width, height, null);
+		
+//		for drawing the hitBox
+		drawHitbox(g);
 	}
 	
 	private void updateAnimationTick() {
@@ -85,18 +100,25 @@ public class Player extends Entity{
 //		for ideal case
 		moving = false;
 		
-		if(left && !right) {
-			x -= playerSpeed;
-			moving = true;
-		}else if(right && !left){
-			x += playerSpeed;
-			moving = true;
-		}
-		if(up && !down) {
-			y -= playerSpeed;
-			moving = true;
-		}else if(!up && down) {
-			y += playerSpeed;
+		if(!left && !right && !up && !down)
+			return;
+		
+		float xSpeed = 0, ySpeed = 0;
+		
+		if(left && !right) 
+			xSpeed = -playerSpeed;
+		else if(right && !left)
+			xSpeed = playerSpeed;
+
+		if(up && !down) 
+			ySpeed = -playerSpeed;
+		else if(!up && down) 
+			ySpeed = playerSpeed;
+		
+//		checking if we can move here or not
+		if(CanMoveHere(hitBox.x+xSpeed, hitBox.y+ySpeed, hitBox.width, hitBox.height, lvlData)) {
+			hitBox.x += xSpeed;
+			hitBox.y += ySpeed;
 			moving = true;
 		}
 	}
@@ -112,8 +134,12 @@ public class Player extends Entity{
 			for(int i=0;i<animations[j].length ;i++) {
 				animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
 			}
-		}
-		
+		}	
+	}
+	
+//	for loading the lvl Data called form -> {Game}
+	public void loadLvlData(int[][] lvlData) {
+		this.lvlData = lvlData;
 	}
 	
 	public void resetDirBooleans() {

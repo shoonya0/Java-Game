@@ -57,9 +57,11 @@ public class LoadSave {
 				if(value >= 48)
 					value = 0;
 //				here I am getting the red value of img pixel (r,g,b) only red variable
-				lvlData[j][i] = color.getRed();
+				lvlData[j][i] = value;
 			}
 		}
+		
+		
 		return lvlData;	
 	}
 }

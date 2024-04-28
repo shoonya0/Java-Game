@@ -16,4 +16,9 @@ public class Level {
 		return lvlData[y][x];
 	}
 	
+//	for returning level data called form -> {LevelManager}
+	public int[][] getLevelData(){
+		return lvlData;
+	}
+	
 }
