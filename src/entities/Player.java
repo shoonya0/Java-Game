@@ -1,7 +1,7 @@
 package entities;
 
 import static utilz.Constants.PlayerConstants.*;
-import static utilz.HelpMethods.CanMoveHere;
+import static utilz.HelpMethods.*;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -16,22 +16,33 @@ public class Player extends Entity{
 	private int aniTick, aniIndex ,aniSpeed = 15;
 	private int playerAction = IDlE;
 	private Boolean moving  = false ,attacking = false;
-	private Boolean left = false ,up = false ,right = false ,down = false;
-	private float playerSpeed = 2.0f;
+	private Boolean left = false ,up = false ,right = false ,down = false ,jump = false;
+	private float playerSpeed = 1.0f;
 //	contain the level data for checking if the player is on the right tile or not (for hitBox)
 	private int[][] lvlData;
 //	xOffset of player -> from where player start from similarly for yOffset
 	private float xDrawOffset = 21*Game.SCALE;
 	private float yDrawOffset = 4*Game.SCALE;
 	
-//	here we are passing the x,y to entity
+//	Jumping / Gravity
+	private float airSpeed = 0f;
+	private float gravity = 0.04f*Game.SCALE;
+	private float jumpSpeed = -2.25f*Game.SCALE;
+	private float fallSpeedAfterCollision = 0.5f*Game.SCALE;
+	private boolean inAir = false;
+	
+	
+	
+//	here we are passing the x,y to entity called from -> {Game -> initClasses()}
 	public Player(float x, float y ,int width ,int height) {
+//		calling the super class which is Entity
 		super(x, y ,width ,height);
 //		for loading the animation in the animation array
 		loadAnimations();
 		
-//		here the x and y are of hitBox x and y
-		initHitbox(x, y, 20 * Game.SCALE, 28 * Game.SCALE);
+//		here the x and y are of hitBox x and y meaning changing the area of player hitRange
+//		we have done 27 in place of 28 in height because to reduce one pixel so that our hitBox (hitBox become little larger which cause problem in player movement in different SCALE)
+		initHitbox(x, y, 20 * Game.SCALE, 27 * Game.SCALE);
 	}
 	
 	public void update() {
@@ -80,6 +91,14 @@ public class Player extends Entity{
 			playerAction = RUNNING;
 		else
 			playerAction = IDlE;
+		
+		if(inAir) {
+			if(airSpeed < 0)
+				playerAction = JUMP;
+			else
+				playerAction = FALLING;
+		}
+		
 //		for attacking
 		if(attacking)
 			playerAction = ATTACK_1;
@@ -96,33 +115,74 @@ public class Player extends Entity{
 
 //	use for updating the position of the player
 	private void updatePos() {
-		
+
 //		for ideal case
 		moving = false;
 		
-		if(!left && !right && !up && !down)
+//		for jumping
+		if(jump)
+			jump();
+		
+		if(!left && !right && !inAir)
 			return;
 		
-		float xSpeed = 0, ySpeed = 0;
+		float xSpeed = 0;
 		
-		if(left && !right) 
-			xSpeed = -playerSpeed;
-		else if(right && !left)
-			xSpeed = playerSpeed;
-
-		if(up && !down) 
-			ySpeed = -playerSpeed;
-		else if(!up && down) 
-			ySpeed = playerSpeed;
+		if(left) 
+			xSpeed -= playerSpeed;
+		if(right)
+			xSpeed += playerSpeed;
+//		checking in every move that we are on floor or not
+		if(!inAir)
+			if(!IsEntityOnFloor(hitBox ,lvlData))
+				inAir = true;
 		
-//		checking if we can move here or not
-		if(CanMoveHere(hitBox.x+xSpeed, hitBox.y+ySpeed, hitBox.width, hitBox.height, lvlData)) {
-			hitBox.x += xSpeed;
-			hitBox.y += ySpeed;
-			moving = true;
-		}
+		if(inAir) {
+//			checking if we can move here or not
+			if(CanMoveHere(hitBox.x ,hitBox.y + airSpeed, hitBox.width, hitBox.height ,lvlData)) {
+				hitBox.y += airSpeed;
+				airSpeed += gravity;
+				updateXPos(xSpeed);
+			}else{
+//				if we are hitting roof or floor
+				hitBox.y = getEntityYPosUnderRoofOrAboveFloor(hitBox ,airSpeed);
+//				checking that we are going down and we hit an entity
+				if(airSpeed > 0)
+					resetInAir();
+				else
+//					for giving a little speed
+					airSpeed = fallSpeedAfterCollision;
+				updateXPos(xSpeed);
+			}
+				
+		}else 
+			updateXPos(xSpeed);
+		moving = true;
 	}
 	
+	private void jump() {
+		if(inAir)
+			return;
+		inAir = true;
+		airSpeed = jumpSpeed;
+	}
+
+	private void resetInAir() {
+		inAir = false;
+		airSpeed = 0;
+	}
+
+//	checking if we can move in x-axis left or right
+	private void updateXPos(float xSpeed) {
+//		checking if we can move here or not
+		if(CanMoveHere(hitBox.x+xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
+			hitBox.x += xSpeed;
+		}else {
+//			method for hitBox is hitting a wall
+			hitBox.x = GetEntityXPosNextToWall(hitBox ,xSpeed);
+		}
+	}
+
 	private void loadAnimations() {
 
 		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ALTAS);
@@ -140,6 +200,8 @@ public class Player extends Entity{
 //	for loading the lvl Data called form -> {Game}
 	public void loadLvlData(int[][] lvlData) {
 		this.lvlData = lvlData;
+		if(!IsEntityOnFloor(hitBox, lvlData))
+			inAir = true;
 	}
 	
 	public void resetDirBooleans() {
@@ -187,7 +249,8 @@ public class Player extends Entity{
 		this.down = down;
 	}
 	
+	public void setJump(Boolean jump) {
+		this.jump = jump;
+	}
+	
 }
-
-
-

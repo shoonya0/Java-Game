@@ -14,6 +14,7 @@ public abstract class Entity {
 //	this is the hitBox for the player and enemies (using 2D.float to use float value) this help us in collision detection
 	protected Rectangle2D.Float hitBox;
 	
+//	called from -> {player} (this is the super class of Player)
 	public Entity(float x, float y ,int width ,int height) {
 		this.x = x;
 		this.y = y;
