@@ -17,7 +17,7 @@ public class Player extends Entity{
 	private int playerAction = IDlE;
 	private Boolean moving  = false ,attacking = false;
 	private Boolean left = false ,up = false ,right = false ,down = false ,jump = false;
-	private float playerSpeed = 1.0f;
+	private float playerSpeed = 1.0f * Game.SCALE;
 //	contain the level data for checking if the player is on the right tile or not (for hitBox)
 	private int[][] lvlData;
 //	xOffset of player -> from where player start from similarly for yOffset
@@ -42,9 +42,10 @@ public class Player extends Entity{
 		
 //		here the x and y are of hitBox x and y meaning changing the area of player hitRange
 //		we have done 27 in place of 28 in height because to reduce one pixel so that our hitBox (hitBox become little larger which cause problem in player movement in different SCALE)
-		initHitbox(x, y, 20 * Game.SCALE, 27 * Game.SCALE);
+		initHitbox(x, y, (int)(20 * Game.SCALE), (int)(27 * Game.SCALE));
 	}
 	
+//	called from -> ./gameState/Playing
 	public void update() {
 //		updating the position of the player according to player actions
 		updatePos();
@@ -57,7 +58,7 @@ public class Player extends Entity{
 		
 	}
 
-//	for rendering player
+//	for rendering player called from -> ./gameState/Playing 
 	public void render(Graphics g) {
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
@@ -65,7 +66,7 @@ public class Player extends Entity{
 		g.drawImage(animations[playerAction][aniIndex], (int)(hitBox.x - xDrawOffset), (int)(hitBox.y - yDrawOffset), width, height, null);
 		
 //		for drawing the hitBox
-		drawHitbox(g);
+//		drawHitbox(g);
 	}
 	
 	private void updateAnimationTick() {
@@ -138,7 +139,8 @@ public class Player extends Entity{
 				inAir = true;
 		
 		if(inAir) {
-//			checking if we can move here or not
+//			checking for collision in x-axis as well as y-axis
+//			first we check up and down then we go sideways
 			if(CanMoveHere(hitBox.x ,hitBox.y + airSpeed, hitBox.width, hitBox.height ,lvlData)) {
 				hitBox.y += airSpeed;
 				airSpeed += gravity;
@@ -148,9 +150,11 @@ public class Player extends Entity{
 				hitBox.y = getEntityYPosUnderRoofOrAboveFloor(hitBox ,airSpeed);
 //				checking that we are going down and we hit an entity
 				if(airSpeed > 0)
+//					for hitting the floor
 					resetInAir();
 				else
-//					for giving a little speed
+//					for hitting the roof
+//					this means we hit something and we are going down and for giving a little speed after collision we do
 					airSpeed = fallSpeedAfterCollision;
 				updateXPos(xSpeed);
 			}
@@ -178,7 +182,7 @@ public class Player extends Entity{
 		if(CanMoveHere(hitBox.x+xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
 			hitBox.x += xSpeed;
 		}else {
-//			method for hitBox is hitting a wall
+//			method for hitBox is hitting a wall before this we are colliding with the wall now we want to move next to that
 			hitBox.x = GetEntityXPosNextToWall(hitBox ,xSpeed);
 		}
 	}

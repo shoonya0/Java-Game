@@ -30,7 +30,7 @@ public abstract class Entity {
 	}
 	
 //	for initializing hitBox -> called from { Player }
-	protected void initHitbox(float x ,float y ,float width ,float height) {
+	protected void initHitbox(float x ,float y ,int width ,int height) {
 		hitBox = new Rectangle2D.Float(x ,y ,width ,height);
 	}
 	

@@ -1,9 +1,11 @@
+// now ->  
 package main;
 
 import java.awt.Graphics;
 
-import entities.Player;
-import levels.LevelManager;
+import gameStates.GameState;
+import gameStates.Menu;
+import gameStates.Playing;
 
 //here everything is start and take form
 
@@ -17,11 +19,14 @@ public class Game implements Runnable{
 	private final int FPS_SET = 120;
 //	updates per seconds
 	private final int UPS_SET = 200;
-	private Player player;
-	private LevelManager levelManager;
 
+//	creating the object of Menu and Playing
+	private Playing playing;
+	private Menu menu;
+	
+	
 	public final static int TILES_DEFAULT_SIZE = 32;
-	public final static float SCALE = 1f;
+	public final static float SCALE = 1.5f;
 	public final static int TILES_IN_WIDTH = 26;
 	public final static int TILES_IN_HEIGHT = 14;
 	public final static int TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
@@ -38,15 +43,14 @@ public class Game implements Runnable{
 //		here we are telling that we need to focus inputs to gamePanel
 		gamePanel.requestFocus();
 		
-
 		startGameLoop();
 		
 	}
 
+//	here i am initializing my player and menu 
 	private void initClasses() {
-		levelManager = new LevelManager(this);
-		player = new Player(200, 200 ,(int)(64*SCALE) ,(int)(40*SCALE));
-		player.loadLvlData(levelManager.getCurrentLevel().getLevelData());
+		menu = new Menu(this);
+		playing = new Playing(this);
 	}
 
 
@@ -59,13 +63,35 @@ public class Game implements Runnable{
 	
 //	we use this method to control the player moment or event for readability and we need our logic to run as smooth as it can however we can sacrifice some FPS in case of lag  
 	private void update() {
-		player.update();
-		levelManager.update();
+//		adding gameState from -> {GameState}
+		switch(GameState.state) {
+			case MENUE:
+				menu.update();
+				break;
+			case PLAYING:
+				playing.update();
+				break;
+			case OPTIONS:
+			case QUIT:
+//				use to terminate our program
+				System.exit(0);
+			default:
+				break;
+		}
 	}
 	
-	public void render(Graphics g) {
-		levelManager.draw(g);
-		player.render(g);
+	public void render(Graphics g) {		
+//		adding gameState from -> {GameState}
+		switch(GameState.state) {
+			case MENUE:
+				menu.draw(g);
+				break;
+			case PLAYING:
+				playing.draw(g);
+				break;
+			default:
+				break;
+		}
 	}
 	
 //	the code inside the run method is run on different thread
@@ -127,12 +153,18 @@ public class Game implements Runnable{
 	}
 	
 	public void windowFocusLost() {
-		player.resetDirBooleans();
+		if(GameState.state == GameState.PLAYING)
+			playing.getPlayer().resetDirBooleans();
 	}
 	
-//	getting player
-	public Player getPlayer() {
-		return player;
+//	called from -> ./input/keyboardingInputs
+	public Menu getMenu() {
+		return menu;
+	}
+	
+//	called from -> ./input/keyboardingInputs
+	public Playing getPlaying() {
+		return playing;
 	}
 	
 }

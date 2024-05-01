@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import gameStates.GameState;
 import main.GamePanel;
 
 // here we use the property that : we can extend only one class but we can implements more than one 
@@ -22,26 +23,56 @@ public class MouseInputs implements MouseListener ,MouseMotionListener{
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		
+		switch(GameState.state) {
+			case MENUE:
+				gamePanel.getGame().getMenu().mouseMoved(e);
+				break;
+			case PLAYING:
+				gamePanel.getGame().getPlaying().mouseMoved(e);				
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON1) 
-			gamePanel.getGame().getPlayer().setAttacking(true);
-		
+//		adding mouse click event for changing the state of the game GAME ,MENU
+		switch(GameState.state) {
+			case PLAYING:
+				gamePanel.getGame().getPlaying().mouseClicked(e);				
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		switch(GameState.state) {
+			case MENUE:
+				gamePanel.getGame().getMenu().mousePressed(e);
+				break;
+			case PLAYING:
+				gamePanel.getGame().getPlaying().mousePressed(e);				
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		switch(GameState.state) {
+			case MENUE:
+				gamePanel.getGame().getMenu().mouseReleased(e);
+				break;
+			case PLAYING:
+				gamePanel.getGame().getPlaying().mouseReleased(e);				
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
