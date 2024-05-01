@@ -58,7 +58,5 @@ public class PauseButton {
 
 	public void setBound(Rectangle bound) {
 		this.bound = bound;
-	}
-	
-	
+	}	
 }

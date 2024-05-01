@@ -19,6 +19,9 @@ public class LoadSave {
 	public static final String MENU_BACKGROUND = "menu_background.png";
 	public static final String PAUSE_BACKGROUND = "pause_menu.png";
 	public static final String SOUND_BUTTON = "sound_button.png";
+//	unpause replay and home button
+	public static final String URM_BUTTON = "urm_buttons.png";
+	public static final String VOLUME_BUTTON = "volume_buttons.png";
 	
 //	here we will not have constructor because we use static method so we do have to create an obj of this class to access any method
 	public static BufferedImage GetSpriteAtlas(String fileName) {
