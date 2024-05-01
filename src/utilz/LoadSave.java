@@ -14,7 +14,8 @@ public class LoadSave {
 	
 	public static final String PLAYER_ALTAS = "player_sprites.png";
 	public static final String LEVEL_ALTAS = "outside_sprites.png";
-	public static final String LEVEL_ONE_DATA = "level_one_data.png";
+//	public static final String LEVEL_ONE_DATA = "level_one_data.png";
+	public static final String LEVEL_ONE_DATA = "level_one_data_long_.png";
 	public static final String MENU_BUTTONS = "button_atlas.png";
 	public static final String MENU_BACKGROUND = "menu_background.png";
 	public static final String PAUSE_BACKGROUND = "pause_menu.png";
@@ -22,6 +23,7 @@ public class LoadSave {
 //	unpause replay and home button
 	public static final String URM_BUTTON = "urm_buttons.png";
 	public static final String VOLUME_BUTTON = "volume_buttons.png";
+	public static final String MENUE_BACKGROUND_IMG = "background_menu.png";
 	
 //	here we will not have constructor because we use static method so we do have to create an obj of this class to access any method
 	public static BufferedImage GetSpriteAtlas(String fileName) {
@@ -49,9 +51,10 @@ public class LoadSave {
 	
 //	return an 2d array and the size of this array will match the size of our game window in terms of tile per width and height
 	public static int[][] GetLevelDate(){
-		int [][] lvlData = new int[Game.TILES_IN_HEIGHT][Game.TILES_IN_WIDTH];
 //		here we are taking the 48 pixel image
 		BufferedImage img = GetSpriteAtlas(LEVEL_ONE_DATA);
+		
+		int [][] lvlData = new int[img.getHeight()][img.getWidth()];
 		
 //		image.height() is use to get the pixel height because we have image in pixel(very small)
 		for(int j = 0; j < img.getHeight(); j++) {

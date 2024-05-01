@@ -18,7 +18,9 @@ public class HelpMethods {
 	
 //	checking is it a tile and also checking the position is inside the game window
 	private static boolean IsSolid(float x ,float y ,int[][] lvlData) {
-		if(x < 0 || x >= Game.GAME_WIDTH)
+//		to get all the width of the level
+		int maxWidth = lvlData[0].length * Game.TILES_SIZE;
+		if(x < 0 || x >= maxWidth)
 				return true;
 		if(y < 0 || y >= Game.GAME_HEIGHT)
 				return true;

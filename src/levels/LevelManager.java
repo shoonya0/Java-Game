@@ -35,14 +35,14 @@ public class LevelManager {
 	}
 
 //	here i am drawing the level
-	public void draw(Graphics g) {
+	public void draw(Graphics g ,int lvlOffset) {
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
 		
 		for(int j = 0 ;j < Game.TILES_IN_HEIGHT ;j++)
-			for(int i = 0 ; i < Game.TILES_IN_WIDTH ;i++) {
+			for(int i = 0 ; i < levelOne.getLevelData()[0].length ;i++) {
 				int index = levelOne.getSpriteIndex(i, j);				
-				g.drawImage(levelSprite[index], Game.TILES_SIZE*i ,Game.TILES_SIZE*j, Game.TILES_SIZE, Game.TILES_SIZE, null);
+				g.drawImage(levelSprite[index], Game.TILES_SIZE*i - lvlOffset,Game.TILES_SIZE*j, Game.TILES_SIZE, Game.TILES_SIZE, null);
 			}
 	}
 	

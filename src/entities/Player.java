@@ -59,11 +59,11 @@ public class Player extends Entity{
 	}
 
 //	for rendering player called from -> ./gameState/Playing 
-	public void render(Graphics g) {
+	public void render(Graphics g ,int lvlOffset) {
 //		here we are drawing sub image of an image
 //		here the 4th variable getFocusCycleRootAncestor() is use for monitoring the status of the image before it's fully drawn
 //		we are drawing the player according to hitBox x and y value
-		g.drawImage(animations[playerAction][aniIndex], (int)(hitBox.x - xDrawOffset), (int)(hitBox.y - yDrawOffset), width, height, null);
+		g.drawImage(animations[playerAction][aniIndex], (int)(hitBox.x - xDrawOffset) - lvlOffset, (int)(hitBox.y - yDrawOffset), width, height, null);
 		
 //		for drawing the hitBox
 //		drawHitbox(g);
@@ -124,8 +124,13 @@ public class Player extends Entity{
 		if(jump)
 			jump();
 		
-		if(!left && !right && !inAir)
-			return;
+//		if(!left && !right && !inAir)
+//			return;
+		
+		if(!inAir)
+			if((!left && !right) || (left && right))
+				return ;
+		
 		
 		float xSpeed = 0;
 		

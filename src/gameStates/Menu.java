@@ -14,13 +14,14 @@ public class Menu extends State implements Statemethods{
 //	array of buttons in menu
 	private MenuButton[] buttons = new MenuButton[3];
 //	for background image of menue
-	private BufferedImage backgroundImage;
+	private BufferedImage backgroundImage ,backgroundImgPink;
 	private int menuX ,menuY ,menuWidth ,menuHeight;
 	
 	public Menu(Game game) {
 		super(game);
 		loadButtons();
 		loadBackground();
+		backgroundImgPink = LoadSave.GetSpriteAtlas(LoadSave.MENUE_BACKGROUND_IMG);
 	}
 
 	private void loadBackground() {
@@ -45,6 +46,10 @@ public class Menu extends State implements Statemethods{
 
 	@Override
 	public void draw(Graphics g) {
+//		drawing the whole background of the menu
+		g.drawImage(backgroundImgPink, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
+		
+//		this is to draw menu
 		g.drawImage(backgroundImage, menuX, menuY, menuWidth ,menuHeight ,null);
 		for(MenuButton mb : buttons) 
 			mb.draw(g);

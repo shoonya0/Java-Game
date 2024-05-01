@@ -1,5 +1,6 @@
 package gameStates;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -8,6 +9,7 @@ import entities.Player;
 import levels.LevelManager;
 import main.Game;
 import ui.PauseOverlay;
+import utilz.LoadSave;
 
 // the super class is State
 public class Playing extends State implements Statemethods{
@@ -17,6 +19,15 @@ public class Playing extends State implements Statemethods{
 	private PauseOverlay pauseOverlay;
 	private boolean paused = false;
 	
+//	this is the offset we add to or remove to draw left or right side of the game
+	private int xLevelOffset;
+//	this means 20 % of game width and the sum is the full width
+	private int leftBorder = (int)(0.20 * Game.GAME_WIDTH);
+	private int rightBorder = (int)(0.80 * Game.GAME_WIDTH);
+//	total tiles of level
+	private int lvlTilesWide = LoadSave.GetLevelDate()[0].length;
+	private int maxTilesOffset = lvlTilesWide - Game.TILES_IN_WIDTH;
+	private int maxLvlOffsetX = maxTilesOffset * Game.TILES_SIZE;
 	
 
 //	constructor
@@ -38,11 +49,29 @@ public class Playing extends State implements Statemethods{
 	public void update() {
 		if(!paused) {
 			levelManager.update();
-			player.update();			
+			player.update();	
+			checkCloseToBorder();
 		}else {
 			pauseOverlay.update();			
 		}
 		
+	}
+
+	private void checkCloseToBorder() {
+		int playerX = (int) player.getHitbox().x;
+//		if the diff is more than then the right border then we know the player is beyond right border then we know that we have to move the border to the right simararly for the left
+		int diff = playerX - xLevelOffset;
+		
+		if(diff > rightBorder)
+			xLevelOffset += diff - rightBorder;
+		else if(diff < leftBorder)
+			xLevelOffset += diff - leftBorder;
+		
+//		this is to check that our lvlOffset does not get too high or too low
+		if(xLevelOffset > maxLvlOffsetX)
+			xLevelOffset = maxLvlOffsetX;
+		else if(xLevelOffset < 0)
+			xLevelOffset = 0;
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -52,11 +81,14 @@ public class Playing extends State implements Statemethods{
 	
 	@Override
 	public void draw(Graphics g) {
-		levelManager.draw(g);
-		player.render(g);
+		levelManager.draw(g ,xLevelOffset);
+		player.render(g ,xLevelOffset);
 		
-		if(paused)
+		if(paused) {
+			g.setColor(new Color(0 ,0 ,0 ,200));
+			g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
 			pauseOverlay.draw(g);
+		}
 	}
 
 	@Override
