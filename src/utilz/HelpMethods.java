@@ -72,11 +72,14 @@ public class HelpMethods {
 //	checking if an entity is on the floor or not called from -> {Player}
 	public static boolean IsEntityOnFloor(Rectangle2D.Float hitBox ,int[][] lvlData) {
 //		check pixel below bottom left and bottom right
-		if(!IsSolid(hitBox.x, hitBox.y + hitBox.height + 2, lvlData))
-			if(!IsSolid(hitBox.x + hitBox.width, hitBox.y + hitBox.height + 2, lvlData))
+		if(!IsSolid(hitBox.x, hitBox.y + hitBox.height + 1, lvlData))
+			if(!IsSolid(hitBox.x + hitBox.width, hitBox.y + hitBox.height + 1, lvlData))
 //				means we are not on floor
 				return false;
 		return true;		
 	}
 	
+	public static boolean IsFloor(Rectangle2D.Float hitBox ,float xSpeed ,int[][] lvlData) {
+		return IsSolid(hitBox.x + xSpeed, hitBox.y + hitBox.height + 1, lvlData);
+	}
 }

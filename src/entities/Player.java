@@ -26,7 +26,7 @@ public class Player extends Entity{
 	
 //	Jumping / Gravity
 	private float airSpeed = 0f;
-	private float gravity = 0.04f*Game.SCALE;
+	private float gravity = 0.01f*Game.SCALE;
 	private float jumpSpeed = -2.25f*Game.SCALE;
 	private float fallSpeedAfterCollision = 0.5f*Game.SCALE;
 	private boolean inAir = false;
@@ -66,7 +66,7 @@ public class Player extends Entity{
 		g.drawImage(animations[playerAction][aniIndex], (int)(hitBox.x - xDrawOffset) - lvlOffset, (int)(hitBox.y - yDrawOffset), width, height, null);
 		
 //		for drawing the hitBox
-//		drawHitbox(g);
+//		drawHitbox(g ,lvlOffset);
 	}
 	
 	private void updateAnimationTick() {

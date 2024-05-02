@@ -23,10 +23,10 @@ public abstract class Entity {
 	}
 
 //	this is for drawing the hitBox so that we can check how much area did our hitBox cover called from { Player }
-	protected void drawHitbox(Graphics g) {
+	protected void drawHitbox(Graphics g ,int xLvlOffset) {
 //		for debugging the hitBox
 		g.setColor(Color.BLACK);
-		g.drawRect((int)hitBox.x, (int)hitBox.y, (int)hitBox.width, (int)hitBox.height);
+		g.drawRect((int)hitBox.x - xLvlOffset, (int)hitBox.y, (int)hitBox.width, (int)hitBox.height);
 	}
 	
 //	for initializing hitBox -> called from { Player }
