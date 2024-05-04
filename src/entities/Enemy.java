@@ -2,6 +2,10 @@ package entities;
 
 import static utilz.Constants.EnemyConstants.*;
 import static utilz.HelpMethods.*;
+
+import java.awt.ActiveEvent;
+import java.awt.geom.Rectangle2D;
+
 import static utilz.Constants.Directions.*;
 
 import main.Game;
@@ -15,18 +19,27 @@ public abstract class Enemy extends Entity{
 	protected boolean inAir = false;
 	protected float fallSpeed = 0;
 	protected float gravity = 0.04f * Game.SCALE;
-	protected float walkSpeed = 0.35f * Game.SCALE;
+	protected float walkSpeed = 0.85f * Game.SCALE;
 	protected int walkDir = LEFT;
 //	Position of enemy in y-axis use for enemy to detect the player
 	protected int tileY;
 //	attack distance of the enemy
 	protected float attackDistance = Game.TILES_SIZE;	
+	protected int maxHealth;
+	protected int currHealth;
+	protected boolean active = true;
+	protected boolean attackChecked = false;
+	
+	
 	
 	public Enemy(float x, float y, int width, int height ,int enemyType) {
 		super(x, y, width, height);
 		
 		this.enemyType = enemyType;
 		initHitbox(x, y, width, height);
+		
+		maxHealth = GetMaxHealth(enemyType);
+		currHealth = maxHealth;
 	}
 
 //	for checking the status of enemy for first time
@@ -75,7 +88,9 @@ public abstract class Enemy extends Entity{
 //		take y pos of player and convert it into tile y
 		int playerTileY = (int)player.getHitbox().y / Game.TILES_SIZE;
 		
-		if(playerTileY == tileY) 
+//		System.out.println(playerTileY + "  " + tileY);
+		
+		if(playerTileY == tileY)
 			if(isPlayerInRange(player)) {
 //				here we have to pass hitBox of enemy and player with tileY -> current tile of enemy 
 				if(IsSightClear(lvlData ,hitBox ,player.hitBox ,tileY))
@@ -96,10 +111,26 @@ public abstract class Enemy extends Entity{
 		return absValue <= attackDistance ;
 	}
 	
+//	starting the action from the starting index
 	protected void newState(int enemyState) {
 		this.enemyState = enemyState;
 		aniIndex = 0;
 		aniTick = 0;
+	}
+	
+	public void hurt(int amount) {
+		currHealth -= amount;
+		if(currHealth <= 0) 
+			newState(DEAD);
+		else 
+			newState(HIT);
+	}
+	
+//	checking for enemy hit
+	protected void checkEnemyHit(Rectangle2D.Float attackBox ,Player player) {
+		if(attackBox.intersects(player.hitBox)) 
+			player.changeHealth(-GetEnemyDmg(enemyType));
+		attackChecked = true;
 	}
 	
 	protected void updateAnimationTick() {
@@ -110,8 +141,11 @@ public abstract class Enemy extends Entity{
 			if(aniIndex >= GetSpritAmount(enemyType, enemyState)) {
 				aniIndex = 0;
 //				here we are changing the state to the IDEL as soon as the enemy ATTACK so that we can leave the attack animation
-				if(enemyState == ATTACK)
-					enemyState = IDEL;
+//				Modern switch case
+				switch (enemyState) {
+					case ATTACK ,HIT -> enemyState = IDEL;
+					case DEAD -> active = false;
+				}
 			}
 		}
 	}
@@ -122,11 +156,24 @@ public abstract class Enemy extends Entity{
 		else 
 			walkDir = LEFT;
 	}
+	
+	public void resetEnemy() {
+		hitBox.x = x;
+		hitBox.y = y;
+		firstUpdate = true;
+		currHealth = maxHealth;
+		newState(IDEL);
+		active = true;
+		fallSpeed = 0;
+	}
 
 	public int getAniIndex() {
 		return aniIndex;
 	}
 	public int getEnemyState() {
 		return enemyState;
+	}
+	public boolean isActive() {
+		return active;
 	}
 }
