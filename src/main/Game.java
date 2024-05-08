@@ -40,6 +40,9 @@ public class Game implements Runnable{
 		
 		gamePanel = new GamePanel(this);
 		gameWindow = new GameWindow(gamePanel);
+		
+//		focusable indicates whether this Component is focusable or not
+		gamePanel.setFocusable(true);
 //		here we are telling that we need to focus inputs to gamePanel
 		gamePanel.requestFocus();
 		

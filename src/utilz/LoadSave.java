@@ -35,6 +35,7 @@ public class LoadSave {
 	public static final String SMALL_CLOUDS = "small_clouds.png";
 	public static final String CRABBY_SPRITE = "crabby_sprite.png";
 	public static final String STATUS_BAR = "health_power_bar.png";
+	public static final String COMPLETED_IMG = "completed_sprite.png";
 	
 //	here we will not have constructor because we use static method so we do have to create an obj of this class to access any method
 	public static BufferedImage GetSpriteAtlas(String fileName) {
